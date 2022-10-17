@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# This script is displaying "Best School" 10 times with while
-i=0
-
-while [ $i -lt "10" ]
+# Shell that prints 'Best School' 10 times using while
+i=1
+while [ $i -le 10 ]
 do
-    echo "Best School"
-    (("i += 1"))
+	echo "Best School"
+	((i=i+1))
 done
