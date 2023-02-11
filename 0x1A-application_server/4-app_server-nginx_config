@@ -1,78 +1,36 @@
-
 ##
 # You should look at the following URL's in order to grasp a solid understanding
 # of Nginx configuration files in order to fully unleash the power of Nginx.
-# https://www.nginx.com/resources/wiki/start/
-# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
-# https://wiki.debian.org/Nginx/DirectoryStructure
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
 #
-# In most cases, administrators will remove this file from sites-enabled/ and
-# leave it as reference inside of sites-available where it will continue to be
-# updated by the nginx packaging team.
-#
-# This file will automatically load configuration files provided by other
-# applications, such as Drupal or Wordpress. These applications will be made
-# available underneath a path with that package name, such as /drupal8.
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
 #
 # Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
-############################################################################
-
-
+##
 
 # Default server configuration
+#
 server {
         listen 80 default_server;
         listen [::]:80 default_server;
 
-        root /var/www/html;
-
-        # Add index.php to the list if you are using PHP
-        index index.html index.htm index.nginx-debian.html;
-
         server_name _;
 
-        location / {
-                # First attempt to serve request as file, then
-                # as directory, then fall back to displaying a 404.
-                try_files $uri $uri/ =404;
+        location /airbnb-onepage {
+                include proxy_params;
+                proxy_pass http://127.0.0.1:5000;
         }
 
-        # 0x1A-application_server:
-        # 2-app_server-nginx_config
-        location = /airbnb-onepage/ {
-                  proxy_pass http://127.0.0.1:5000/airbnb-onepage/;
-	}
-
-        # 3-app_server-nginx_config
-        location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$ {
+        location ~ ^/airbnb-dynamic/number_odd_or_even/(\d+)$ {
+                include proxy_params;
                 proxy_pass http://127.0.0.1:5001/number_odd_or_even/$1;
         }
 
-        # 4-app_server-nginx_config
-        location /api/ {
+        location /api {
                 include proxy_params;
-                proxy_pass http://127.0.0.1:5002;
+                proxy_pass http://127.0.0.1:5002/api;
         }
-
 }
-
-###############################################################################
-# Virtual Host configuration for example.com
-#
-# You can move that to a different file under sites-available/ and symlink that
-# to sites-enabled/ to enable it.
-#
-#server {
-#       listen 80;
-#       listen [::]:80;
-#
-#       server_name example.com;
-#
-#       root /var/www/example.com;
-#       index index.html;
-#
-#       location / {
-#               try_files $uri $uri/ =404;
-#       }
-#}
-
